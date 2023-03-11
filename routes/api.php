@@ -1,19 +1,16 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\NewsCategorySubscriptionController;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
-|
-*/
-
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::name('api.')->group(function () {
+    Route::apiResource(
+        'news-category-subscriptions',
+        NewsCategorySubscriptionController::class,
+        ['except' => ['show', 'update']],
+    );
+    Route::delete(
+        'news-category-subscriptions',
+        [NewsCategorySubscriptionController::class, 'destroyAll'],
+    )->name('news-category-subscriptions.destroy-all');
 });

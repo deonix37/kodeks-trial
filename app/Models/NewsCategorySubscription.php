@@ -5,12 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class NewsCategory extends Model
+class NewsCategorySubscription extends Model
 {
     use HasFactory;
 
-    public function subscriptions()
-    {
-        return $this->hasMany(NewsCategorySubscription::class);
-    }
+    protected $guarded = [];
 }

@@ -25,7 +25,7 @@ class NewsCategorySubscriptionController extends Controller
                 'offset' => ['nullable', 'int', 'prohibited_if:limit,null'],
             ]);
         } catch (ValidationException $e) {
-            return response()->json([
+            return response()->preferredFormat([
                 'errors' => $e->validator->errors(),
             ], 400);
         }
@@ -44,7 +44,7 @@ class NewsCategorySubscriptionController extends Controller
             fn ($query, $offset) => $query->offset($offset),
         )->get();
 
-        return response()->json([
+        return response()->preferredFormat([
             'data' => $result->toArray(),
         ]);
     }
@@ -79,7 +79,7 @@ class NewsCategorySubscriptionController extends Controller
                 'user_email.unique' => 'Subscription already exists.',
             ]);
         } catch (ValidationException $e) {
-            return response()->json([
+            return response()->preferredFormat([
                 'errors' => $e->validator->errors(),
             ], 400);
         }
@@ -90,7 +90,7 @@ class NewsCategorySubscriptionController extends Controller
 
         $subscription = NewsCategorySubscription::create($data);
 
-        return response()->json($subscription, 201);
+        return response()->preferredFormat($subscription, 201);
     }
 
     public function destroy(
@@ -111,7 +111,7 @@ class NewsCategorySubscriptionController extends Controller
                     ],
                 ]);
             } catch (ValidationException $e) {
-                return response()->json([
+                return response()->preferredFormat([
                     'errors' => $e->validator->errors(),
                 ], 400);
             }
@@ -132,7 +132,7 @@ class NewsCategorySubscriptionController extends Controller
                 ],
             ]);
         } catch (ValidationException $e) {
-            return response()->json([
+            return response()->preferredFormat([
                 'errors' => $e->validator->errors(),
             ], 400);
         }

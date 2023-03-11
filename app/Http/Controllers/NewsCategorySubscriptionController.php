@@ -51,6 +51,8 @@ class NewsCategorySubscriptionController extends Controller
 
     public function store(Request $request)
     {
+        $apiVersion = $request->header('Api-Version', 1);
+
         $rules = [
             'news_category_id' => [
                 'required',
@@ -68,6 +70,10 @@ class NewsCategorySubscriptionController extends Controller
             ],
         ];
 
+        if ($apiVersion == 2) {
+            $rules['user_name'] = ['required', 'string', 'max:255'];
+        }
+
         try {
             $data = $request->validate($rules, [
                 'user_email.unique' => 'Subscription already exists.',
@@ -78,13 +84,39 @@ class NewsCategorySubscriptionController extends Controller
             ], 400);
         }
 
+        if ($apiVersion == 2) {
+            $data['unsubscription_key'] = Str::random();
+        }
+
         $subscription = NewsCategorySubscription::create($data);
 
         return response()->json($subscription, 201);
     }
 
-    public function destroy(NewsCategorySubscription $newsCategorySubscription)
+    public function destroy(
+        Request $request,
+        NewsCategorySubscription $newsCategorySubscription
+    )
     {
+        $apiVersion = $request->header('Api-Version', 1);
+
+        if ($apiVersion == 2) {
+            try {
+                $request->validate([
+                    'unsubscription_key' => [
+                        'required',
+                        Rule::in([
+                            $newsCategorySubscription['unsubscription_key'],
+                        ]),
+                    ],
+                ]);
+            } catch (ValidationException $e) {
+                return response()->json([
+                    'errors' => $e->validator->errors(),
+                ], 400);
+            }
+        }
+
         $newsCategorySubscription->delete();
 
         return response()->noContent();
